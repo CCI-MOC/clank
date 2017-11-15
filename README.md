@@ -22,7 +22,7 @@ Obtain Ansible of the version specified in `requirements.txt`. One way is to use
 ```
 # Install Python dependencies if needed
 apt-get update
-apt-get install -y python python-pip python-dev libffi-dev libssl-dev python-virtualenv
+apt-get install -y python python-pip python-dev libffi-dev libssl-dev python-virtualenv git
 # Create virtual environment, activate it, and install Ansible
 virtualenv clank_env
 . clank_env/bin/activate
