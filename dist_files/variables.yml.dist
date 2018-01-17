@@ -16,8 +16,6 @@
 ###############################
 WORKSPACE: /opt/dev  #NOTE: This is where atmosphere/troposphere directories reside.
 VIRTUAL_ENV_DIR: "/opt/env"  #NOTE: This is where atmosphere/troposphere virtualenv directories reside.
-INSTALLATION_TYPE: "production"  # can be development or production
-#TODO:-- currently INSTALLATION_TYPE deals only with installing the correct requirements.txt -- but could be used to override DJANGO_JENKINS and/or celeryd
 
 ###
 # SECRETS_REPO - This repo should contain the SSH Keys, TLS certificates, and an atmosphere-ansible directory (including hosts file and group_vars directory) that you intend to use when installing Atmosphere.
@@ -292,10 +290,12 @@ AUTH_MOCK_USER: "atmosphere_user"
 #Specific overrides of group_vars/atmosphere go here:
 # atmosphere_database_name: local_atmosphere
 # atmosphere_github_branch: "master"
+# atmosphere_uwsgi_processes: 4  # Strongly recommended for development
 
 #Specific overrides of group_vars/troposphere go here:
 # troposphere_theme_name: troposphere_theme
 # troposphere_github_branch: "master"
+# troposphere_uwsgi_processes: 2 # Strongly recommended for development
 
 #Specific overrides of group_vars/atmosphere-ansible go here:
 # atmosphere_ansible_github_repo: https://github.com/cyverse/atmosphere-ansible.git
@@ -303,7 +303,22 @@ AUTH_MOCK_USER: "atmosphere_user"
 ###############################
 #5. Overrides for Clank Execution
 ###############################
-#Uncomment for faster Clank run (you will not get very latest packages, do not use in production!)
-# faster_dev_rebuild: true
-#Uncomment so that virtualenvs stick around after multiple deploys (much faster build time, sometimes causes pip package issues)
+# Uncomment so that virtualenvs stick around after multiple deploys (much faster build time, sometimes causes pip package issues)
 # REINSTALL_VENV: false
+
+# Uncomment so that uwsgi automatically reloads when atmosphere/troposphere
+# python code changes
+# UWSGI_AUTORELOAD: true
+
+# Uncomment in a development environment if you want to allow self-signed certs for nginx
+# ENABLE_STRICT_TRANSPORT: false
+
+# Uncomment for faster Clank run (you will not get very latest packages, do not use in production!)
+# UPDATE_DISTRO: false
+
+# Uncomment to install development python packages (this will only add
+# additional packages to the set of production packages)
+# INSTALL_DEV_REQUIREMENTS: true
+
+# Uncomment so celeryd consumes less resources (fewer workers and processes)
+# CELERYD_PRODUCTION_WORKER_SETUP: false

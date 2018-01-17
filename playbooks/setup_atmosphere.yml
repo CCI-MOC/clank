@@ -1,7 +1,6 @@
 ---
 - name: Setup the Atmosphere API component
   hosts: atmosphere
-
   roles:
     - { role: app-alter-kernel-for-imaging,
         tags: ['atmosphere'] }
@@ -30,18 +29,18 @@
         REQUIREMENTS_FILE_NAME: 'requirements.txt',
         USE_PIP_TOOLS_SYNC: False,
         VIRTUAL_ENV: "{{ VIRTUAL_ENV_ATMOSPHERE | default(atmosphere_virtualenv_path) }}",
-        PIP_EXTRA_ARGS: '{% if faster_dev_rebuild == false %}--no-cache-dir {% endif %}--no-binary pycparser',
+        PIP_EXTRA_ARGS: '--no-binary pycparser',
         tags: ['atmosphere', 'pip-install-requirements'],
-        when: installation_type is not defined or installation_type != 'development'}
+        when: not (INSTALL_DEV_REQUIREMENTS | default(False)) }
 
     - { role: app-pip-install-requirements,
         APP_BASE_DIR: "{{ ATMOSPHERE_LOCATION | default(atmosphere_directory_path) }}",
         REQUIREMENTS_FILE_NAME: 'dev_requirements.txt',
         USE_PIP_TOOLS_SYNC: False,
         VIRTUAL_ENV: "{{ VIRTUAL_ENV_ATMOSPHERE | default(atmosphere_virtualenv_path) }}",
-        PIP_EXTRA_ARGS: '{% if faster_dev_rebuild == false %}--no-cache-dir {% endif %}--no-binary pycparser',
+        PIP_EXTRA_ARGS: '--no-binary pycparser',
         tags: ['atmosphere', 'pip-install-requirements'],
-        when: installation_type is defined and installation_type == 'development'}
+        when: INSTALL_DEV_REQUIREMENTS | default(False) }
 
     - { role: app-config-logging,
         APP_BASE_DIR: "{{ ATMOSPHERE_LOCATION | default(atmosphere_directory_path) }}",
@@ -90,12 +89,6 @@
         VIRTUAL_ENV: "{{ VIRTUAL_ENV_ATMOSPHERE | default(atmosphere_virtualenv_path) }}",
         DJANGO_SETTINGS_MODULE: 'atmosphere.settings',
         tags: ['atmosphere','manage-load-tables'] }
-
-    - { role: create-nginx-uwsgi,
-        APP_BASE_DIR: "{{ ATMOSPHERE_LOCATION | default(atmosphere_directory_path) }}",
-        UWSGI_APP_NAME: 'atmosphere',
-        UWSGI_INI_SRC_NAME: 'extras/uwsgi/atmo.uwsgi.ini',
-        tags: ['atmosphere', 'deploy', 'create-nginx-uwsgi', 'nginx-uwsgi'] }
 
     - { role: setup-webserver-user-group,
         APP_BASE_DIR: "{{ ATMOSPHERE_LOCATION | default(atmosphere_directory_path) }}",
